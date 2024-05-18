@@ -1,0 +1,18 @@
+name: ingress
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+services:
+  caddy:
+    build: ./caddy
+    restart: unless-stopped
+    network_mode: host
+    command: ["caddy", "run", "--config", "/etc/caddy/caddy.yaml", "--adapter", "yaml"]
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./caddy.yaml:/etc/caddy/caddy.yaml
+      - /var/lib/letsencrypt/certs:/var/lib/letsencrypt/certs
+      - /var/run/docker.sock:/var/run/docker.sock

@@ -1,0 +1,28 @@
+---
+apps:
+  tls:
+    certificates:
+      load_folders:
+        - "/var/lib/letsencrypt/certs"
+  http:
+    servers:
+      srv0:
+        listen:
+          - ":443"
+        automatic_https:
+          disable_certificates: true
+          disable_redirects: false
+        strict_sni_host: true
+        tls_connection_policies:
+          - {}
+        routes:
+          - handle:
+              - "@id": default
+                dynamic_upstreams:
+                  source: docker
+                handler: reverse_proxy
+                load_balancing:
+                  retries: 3
+                  try_duration: 5s
+                  selection_policy:
+                    policy: least_conn
